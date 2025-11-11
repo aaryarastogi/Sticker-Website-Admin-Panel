@@ -27,14 +27,23 @@ function Login({ setIsAuthenticated }) {
       const data = await response.json()
 
       if (response.ok) {
-        // Check if user is admin (you'll need to add this check in backend)
-        // For now, we'll allow any login for admin panel (in production, add proper admin check)
+        // Store token and user data
         localStorage.setItem('adminToken', data.token)
-        localStorage.setItem('adminUser', JSON.stringify(data.user))
+        localStorage.setItem('adminUser', JSON.stringify(data.user || data))
+        
+        // Check if user is admin (backend should verify, but we can show a warning)
+        console.log('Login successful, user data:', data.user || data)
+        
         setIsAuthenticated(true)
         navigate('/dashboard')
       } else {
-        setError(data.message || 'Invalid credentials')
+        // Check if error is about account being disabled
+        const errorMessage = data.error || data.message || 'Invalid credentials'
+        if (errorMessage.toLowerCase().includes('disabled') || errorMessage.toLowerCase().includes('account')) {
+          setError('Your account has been disabled. Please contact support for assistance.')
+        } else {
+          setError(errorMessage)
+        }
       }
     } catch (err) {
       setError('Failed to login. Please try again.')

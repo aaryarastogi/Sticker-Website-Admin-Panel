@@ -4,6 +4,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import BlockIcon from '@mui/icons-material/Block'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import PeopleIcon from '@mui/icons-material/People'
+import WarningIcon from '@mui/icons-material/Warning'
 
 function Users() {
   const navigate = useNavigate()
@@ -11,6 +12,9 @@ function Users() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [updatingUsers, setUpdatingUsers] = useState(new Set())
+  const [warningUsers, setWarningUsers] = useState(new Set())
+  const [warningMessage, setWarningMessage] = useState('')
+  const [warningError, setWarningError] = useState('')
 
   useEffect(() => {
     fetchUsers()
@@ -76,6 +80,62 @@ function Users() {
     }
   }
 
+  const handleWarnUser = async (userId, userName) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to warn "${userName}"? This will send an email and notification to the user warning them that their account will be permanently disabled if they continue with the same activity.`
+    )
+    
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setWarningUsers((prev) => new Set(prev).add(userId))
+      setWarningError('')
+      setWarningMessage('')
+
+      const token = localStorage.getItem('adminToken')
+      const response = await fetch(`/api/admin/users/${userId}/warn`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setWarningMessage(`User "${userName}" has been warned successfully. Email and notification sent.`)
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setWarningMessage('')
+        }, 5000)
+      } else {
+        const errorMsg = data.message || data.error || 'Failed to warn user. Please try again.'
+        setWarningError(errorMsg)
+        // Clear error message after 5 seconds
+        setTimeout(() => {
+          setWarningError('')
+        }, 5000)
+      }
+    } catch (error) {
+      console.error('Error warning user:', error)
+      setWarningError(`Failed to warn user: ${error.message}. Please check your connection and try again.`)
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setWarningError('')
+      }, 5000)
+    } finally {
+      setWarningUsers((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(userId)
+        return newSet
+      })
+    }
+  }
+
   const filteredUsers = users.filter((user) =>
     user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -121,6 +181,35 @@ function Users() {
           />
         </div>
       </div>
+
+      {/* Warning Success/Error Messages */}
+      {warningMessage && (
+        <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-5 py-4 rounded-lg animate-slide-in">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">{warningMessage}</span>
+            <button
+              onClick={() => setWarningMessage('')}
+              className="text-green-700 hover:text-green-900"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {warningError && (
+        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-5 py-4 rounded-lg animate-slide-in">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">{warningError}</span>
+            <button
+              onClick={() => setWarningError('')}
+              className="text-red-700 hover:text-red-900"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Users Table */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
@@ -226,6 +315,26 @@ function Users() {
                           className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 font-medium text-sm transition-all duration-200 hover:scale-105"
                         >
                           View
+                        </button>
+                        <button
+                          onClick={() => handleWarnUser(user.id, user.name || user.username)}
+                          disabled={warningUsers.has(user.id)}
+                          className={`px-4 py-2 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 font-medium text-sm transition-all duration-200 hover:scale-105 flex items-center gap-1.5 ${
+                            warningUsers.has(user.id) ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                          title="Warn user - sends email and notification"
+                        >
+                          {warningUsers.has(user.id) ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-amber-700 border-t-transparent rounded-full animate-spin"></div>
+                              Warning...
+                            </>
+                          ) : (
+                            <>
+                              <WarningIcon fontSize="small" />
+                              Warn
+                            </>
+                          )}
                         </button>
                         <button
                           onClick={() => handleStatusToggle(user.id, user.isActive ?? true)}

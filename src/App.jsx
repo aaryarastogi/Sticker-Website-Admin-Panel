@@ -8,19 +8,127 @@ import Stickers from './Pages/Stickers'
 import Categories from './Pages/Categories'
 import Orders from './Pages/Orders'
 import Layout from './Components/Layout'
+import { setupApiInterceptor, startPeriodicAccountCheck } from './utils/apiInterceptor'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  // Setup API interceptor to check account status on all requests
   useEffect(() => {
-    // Check if admin is logged in
+    setupApiInterceptor(setIsAuthenticated)
+    // Start periodic check for account status
+    startPeriodicAccountCheck(setIsAuthenticated)
+    
+    // Also check when user returns to the tab/window
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // User returned to tab, check account status immediately
+        const token = localStorage.getItem('adminToken')
+        if (token) {
+          fetch('/api/auth/verify', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          })
+            .then(async response => {
+              try {
+                const data = await response.json()
+                if (!response.ok || (data.error && (
+                  data.error.toLowerCase().includes('disabled') || 
+                  data.error.toLowerCase().includes('account has been')
+                ))) {
+                  // Account disabled - logout
+                  localStorage.removeItem('adminToken')
+                  localStorage.removeItem('adminUser')
+                  setIsAuthenticated(false)
+                  alert('Your account has been disabled. You have been logged out. Please contact support for assistance.')
+                  window.location.replace('/login')
+                }
+              } catch (e) {
+                if (response.status === 401) {
+                  localStorage.removeItem('adminToken')
+                  localStorage.removeItem('adminUser')
+                  setIsAuthenticated(false)
+                  window.location.replace('/login')
+                }
+              }
+            })
+            .catch(() => {
+              // Ignore network errors
+            })
+        }
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Check if admin is logged in and verify token
     const adminToken = localStorage.getItem('adminToken')
     if (adminToken) {
-      setIsAuthenticated(true)
+      // Verify token and check if account is still active
+      fetch('/api/auth/verify', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`,
+        },
+      })
+        .then(async response => {
+          try {
+            const data = await response.json()
+            // Check if account is disabled
+            const isDisabled = data.error && (
+              data.error.toLowerCase().includes('disabled') || 
+              data.error.toLowerCase().includes('account has been') ||
+              data.error.toLowerCase().includes('account is disabled')
+            )
+            
+            if (response.ok && !data.error) {
+              setIsAuthenticated(true)
+            } else {
+              // Account disabled or token invalid - logout
+              handleLogout()
+              // Show alert if account is disabled
+              if (isDisabled) {
+                alert('Your account has been disabled. You have been logged out. Please contact support for assistance.')
+              }
+            }
+          } catch (e) {
+            // If response is not JSON or parsing fails, check status
+            if (response.status === 401) {
+              handleLogout()
+              alert('Your session has expired or your account has been disabled. Please log in again.')
+            } else {
+              handleLogout()
+            }
+          }
+        })
+        .catch(() => {
+          // Error verifying - logout
+          handleLogout()
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } else {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
+    setIsAuthenticated(false)
+  }
 
   if (loading) {
     return (

@@ -41,6 +41,8 @@ function Categories() {
     try {
       setLoading(true)
       const token = localStorage.getItem('adminToken')
+      console.log('🔄 Fetching categories from backend...')
+      
       const response = await fetch('http://localhost:3001/api/admin/categories', {
         method: 'GET',
         headers: {
@@ -51,12 +53,16 @@ function Categories() {
       
       if (response.ok) {
         const data = await response.json()
+        console.log(`✅ Fetched ${data.length} categories from backend`)
         setCategories(data)
       } else {
-        console.error('Failed to fetch categories')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Failed to fetch categories:', errorData)
+        alert('Failed to fetch categories. Please refresh the page.')
       }
     } catch (error) {
       console.error('Error fetching categories:', error)
+      alert('Error fetching categories. Please check your connection.')
     } finally {
       setLoading(false)
     }
@@ -143,11 +149,12 @@ function Categories() {
       return
     }
 
-    if (!formData.imageUrl.trim()) {
-      setFormError('Category image is required')
-      setFormLoading(false)
-      return
-    }
+    // Image is optional - if not provided, we'll use a placeholder
+    // if (!formData.imageUrl.trim()) {
+    //   setFormError('Category image is required')
+    //   setFormLoading(false)
+    //   return
+    // }
 
     try {
       const token = localStorage.getItem('adminToken')
@@ -157,29 +164,50 @@ function Categories() {
       
       const method = isEditMode ? 'PUT' : 'POST'
       
+      // Prepare request body
+      const requestBody = {
+        name: formData.name.trim(),
+        imageUrl: formData.imageUrl && formData.imageUrl.trim() ? formData.imageUrl.trim() : null,
+        isPublished: formData.isPublished || false,
+      }
+
+      console.log('Saving category:', { method, url, requestBody })
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           ...(token && { 'Authorization': `Bearer ${token}` }),
         },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          imageUrl: formData.imageUrl,
-          isPublished: formData.isPublished,
-        }),
+        body: JSON.stringify(requestBody),
       })
 
       const data = await response.json()
+      console.log('Category save response:', { status: response.status, data })
 
       if (response.ok) {
-        setFormSuccess(isEditMode ? 'Category updated successfully!' : 'Category created successfully!')
+        const successMessage = isEditMode 
+          ? 'Category updated successfully! It will appear on the main website if published.' 
+          : 'Category created successfully! It will appear on the main website if published.'
+        setFormSuccess(successMessage)
         setTimeout(() => {
           handleCloseModal()
           fetchCategories()
-        }, 1500)
+        }, 2000)
       } else {
-        setFormError(data.error || data.message || 'Failed to save category')
+        // Better error handling
+        let errorMessage = 'Failed to save category'
+        if (response.status === 401) {
+          errorMessage = 'Unauthorized: Please login again as admin'
+        } else if (response.status === 403) {
+          errorMessage = 'Forbidden: Admin access required. Your account may not have admin privileges.'
+        } else if (data.error) {
+          errorMessage = data.error + (data.message ? ': ' + data.message : '')
+        } else if (data.message) {
+          errorMessage = data.message
+        }
+        setFormError(errorMessage)
+        console.error('Category save error:', { status: response.status, data })
       }
     } catch (error) {
       console.error('Error saving category:', error)
@@ -259,14 +287,29 @@ function Categories() {
         <div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Categories</h1>
           <p className="text-gray-600">Manage categories that appear on the main website</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Published categories will be visible on the main website. Draft categories are hidden.
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            💡 Tip: Make sure you're logged in as an admin user to create/edit categories.
+          </p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-        >
-          <AddIcon />
-          Add Category
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchCategories}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm"
+            title="Refresh categories"
+          >
+            Refresh
+          </button>
+          <button
+            onClick={() => handleOpenModal()}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            <AddIcon />
+            Add Category
+          </button>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -418,16 +461,19 @@ function Categories() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter category name"
+                  placeholder="e.g., Animals, Food, Sports, etc."
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Choose a unique name for your category. This will be displayed on the main website.
+                </p>
               </div>
 
               {/* Image Upload Method Tabs */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Category Image <span className="text-red-500">*</span>
+                  Category Image <span className="text-gray-400 text-xs">(Optional - will show placeholder if not provided)</span>
                 </label>
                 <div className="flex gap-1 mb-4 border-b border-gray-200">
                   <button
@@ -542,17 +588,24 @@ function Categories() {
               </div>
 
               {/* Publish Toggle */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <input
                   type="checkbox"
                   id="isPublished"
                   checked={formData.isPublished}
                   onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                  className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 mt-0.5"
                 />
-                <label htmlFor="isPublished" className="text-sm font-medium text-gray-700 cursor-pointer">
-                  Publish category (visible on main website)
-                </label>
+                <div className="flex-1">
+                  <label htmlFor="isPublished" className="text-sm font-medium text-gray-700 cursor-pointer block">
+                    Publish category
+                  </label>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {formData.isPublished 
+                      ? '✅ This category will be visible on the main website' 
+                      : '❌ This category will be hidden from the main website (draft mode)'}
+                  </p>
+                </div>
               </div>
 
               {/* Submit Buttons */}
