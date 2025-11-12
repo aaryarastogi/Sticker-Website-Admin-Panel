@@ -102,42 +102,42 @@ function Dashboard() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-fade-in">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 rounded-2xl p-10 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-xl">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-3">Welcome to Admin Dashboard</h1>
-            <p className="text-purple-100 text-lg">Manage your platform efficiently</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">Welcome to Admin Dashboard</h1>
+            <p className="text-purple-100 text-sm sm:text-base lg:text-lg">Manage your platform efficiently</p>
           </div>
-          <div className="hidden md:block">
-            <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-              <TrendingUpIcon className="text-5xl" />
+          <div className="hidden sm:block ml-4 flex-shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <TrendingUpIcon className="text-3xl sm:text-4xl lg:text-5xl" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {statCards.map((stat, index) => {
           const Icon = stat.icon
           return (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover-lift group relative overflow-hidden"
+              className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100 hover-lift group relative overflow-hidden"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Gradient Background Effect */}
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full blur-2xl -mr-16 -mt-16`}></div>
               
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <div className={`${stat.iconBg} p-4 rounded-xl`}>
-                    <Icon className={`${stat.iconColor}`} fontSize="large" />
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <div className={`${stat.iconBg} p-3 sm:p-4 rounded-lg sm:rounded-xl`}>
+                    <Icon className={`${stat.iconColor}`} sx={{ fontSize: { xs: 28, sm: 32, lg: 40 } }} />
                   </div>
                   {stat.change && (
-                    <span className={`text-xs font-semibold px-3 py-1.5 rounded-full ${
+                    <span className={`text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full ${
                       stat.changeType === 'positive' 
                         ? 'bg-green-100 text-green-600' 
                         : 'bg-red-100 text-red-600'
@@ -147,8 +147,8 @@ function Dashboard() {
                   )}
                 </div>
                 <div>
-                  <p className="text-gray-500 text-sm font-medium mb-2">{stat.title}</p>
-                  <p className="text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
+                  <p className="text-gray-500 text-xs sm:text-sm font-medium mb-1 sm:mb-2">{stat.title}</p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
                     {stat.value}
                   </p>
                 </div>
@@ -159,36 +159,36 @@ function Dashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <PeopleIcon className="text-purple-600" fontSize="large" />
-              Recent Users
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+              <PeopleIcon className="text-purple-600" sx={{ fontSize: { xs: 28, sm: 32, lg: 40 } }} />
+              <span>Recent Users</span>
             </h2>
-            <button className="text-sm text-purple-600 hover:text-purple-700 font-semibold px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors">
+            <button className="text-xs sm:text-sm text-purple-600 hover:text-purple-700 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-purple-50 transition-colors w-full sm:w-auto">
               View All
             </button>
           </div>
-          <div className="text-gray-400 text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <PeopleIcon className="text-5xl mx-auto mb-3 opacity-50" />
-            <p className="text-lg">No recent users to display</p>
+          <div className="text-gray-400 text-center py-12 sm:py-16 bg-gray-50 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-200">
+            <PeopleIcon className="text-4xl sm:text-5xl mx-auto mb-3 opacity-50" />
+            <p className="text-base sm:text-lg">No recent users to display</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <ShoppingCartIcon className="text-green-600" fontSize="large" />
-              Recent Orders
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+              <ShoppingCartIcon className="text-green-600" sx={{ fontSize: { xs: 28, sm: 32, lg: 40 } }} />
+              <span>Recent Orders</span>
             </h2>
-            <button className="text-sm text-green-600 hover:text-green-700 font-semibold px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
+            <button className="text-xs sm:text-sm text-green-600 hover:text-green-700 font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-green-50 transition-colors w-full sm:w-auto">
               View All
             </button>
           </div>
-          <div className="text-gray-400 text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <ShoppingCartIcon className="text-5xl mx-auto mb-3 opacity-50" />
-            <p className="text-lg">No recent orders to display</p>
+          <div className="text-gray-400 text-center py-12 sm:py-16 bg-gray-50 rounded-lg sm:rounded-xl border-2 border-dashed border-gray-200">
+            <ShoppingCartIcon className="text-4xl sm:text-5xl mx-auto mb-3 opacity-50" />
+            <p className="text-base sm:text-lg">No recent orders to display</p>
           </div>
         </div>
       </div>

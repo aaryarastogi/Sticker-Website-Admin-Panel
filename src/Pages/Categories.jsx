@@ -281,34 +281,36 @@ function Categories() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Categories</h1>
-          <p className="text-gray-600">Manage categories that appear on the main website</p>
-          <p className="text-sm text-gray-500 mt-1">
-            Published categories will be visible on the main website. Draft categories are hidden.
-          </p>
-          <p className="text-xs text-blue-600 mt-1">
-            💡 Tip: Make sure you're logged in as an admin user to create/edit categories.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={fetchCategories}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm"
-            title="Refresh categories"
-          >
-            Refresh
-          </button>
-          <button
-            onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-          >
-            <AddIcon />
-            Add Category
-          </button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Categories</h1>
+            <p className="text-sm sm:text-base text-gray-600">Manage categories that appear on the main website</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              Published categories will be visible on the main website. Draft categories are hidden.
+            </p>
+            <p className="text-xs text-blue-600 mt-1 hidden sm:block">
+              💡 Tip: Make sure you're logged in as an admin user to create/edit categories.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <button
+              onClick={fetchCategories}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-xs sm:text-sm"
+              title="Refresh categories"
+            >
+              Refresh
+            </button>
+            <button
+              onClick={() => handleOpenModal()}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm"
+            >
+              <AddIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
+              <span>Add Category</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -326,26 +328,26 @@ function Categories() {
 
       {/* Categories Grid */}
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="text-gray-500 text-lg">Loading categories...</div>
+        <div className="flex justify-center items-center py-12 sm:py-20">
+          <div className="text-gray-500 text-sm sm:text-lg">Loading categories...</div>
         </div>
       ) : filteredCategories.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 rounded-xl">
-          <CategoryIcon className="mx-auto text-gray-400 mb-4" style={{ fontSize: 64 }} />
-          <p className="text-gray-600 text-lg mb-4">
+        <div className="text-center py-12 sm:py-20 bg-gray-50 rounded-xl">
+          <CategoryIcon className="mx-auto text-gray-400 mb-4" sx={{ fontSize: { xs: 48, sm: 64 } }} />
+          <p className="text-gray-600 text-base sm:text-lg mb-4 px-4">
             {searchTerm ? 'No categories found matching your search' : 'No categories yet'}
           </p>
           {!searchTerm && (
             <button
               onClick={() => handleOpenModal()}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all text-sm sm:text-base"
             >
               Create Your First Category
             </button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filteredCategories.map((category) => (
             <div
               key={category.id}
@@ -425,21 +427,22 @@ function Categories() {
 
       {/* Create/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-              <h2 className="text-2xl font-bold text-gray-800">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
                 {isEditMode ? 'Edit Category' : 'Create Category'}
               </h2>
               <button
                 onClick={handleCloseModal}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Close modal"
               >
                 <CloseIcon />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Error/Success Messages */}
               {formError && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">

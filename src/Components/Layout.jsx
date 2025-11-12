@@ -34,11 +34,11 @@ function Layout({ children, setIsAuthenticated }) {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar - Hidden on mobile, shown on desktop */}
       <aside
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
-        } p-6 fixed bg-linear-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-300 flex flex-col h-screen z-30 shadow-2xl`}
+        } hidden lg:flex p-4 lg:p-6 fixed bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-300 flex-col h-screen z-30 shadow-2xl`}
       >
         <div className="p-6 flex items-center justify-between border-b border-gray-700/50">
           {sidebarOpen && (
@@ -109,15 +109,15 @@ function Layout({ children, setIsAuthenticated }) {
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300 flex flex-col h-screen overflow-hidden`}>
+      <div className={`flex-1 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'} ml-0 transition-all duration-300 flex flex-col h-screen overflow-hidden`}>
         {/* Header Bar */}
         <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm sticky top-0 z-20 flex-shrink-0">
-          <div className="px-8 py-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 capitalize mb-1">
+          <div className="pl-16 sm:pl-4 sm:px-6 lg:px-8 pr-4 sm:pr-6 lg:pr-8 py-4 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1 min-w-0 pr-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 capitalize mb-1 break-words overflow-wrap-anywhere">
                 {location.pathname.split('/').pop() || 'Dashboard'}
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500 break-words overflow-wrap-anywhere">
                 {new Date().toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 
@@ -126,10 +126,10 @@ function Layout({ children, setIsAuthenticated }) {
                 })}
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-3 px-5 py-3 bg-gray-100 rounded-xl">
-                <span className="text-sm text-gray-600">Welcome back,</span>
-                <span className="text-sm font-semibold text-gray-800">{adminUser.name || 'Admin'}</span>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="hidden sm:flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-3 bg-gray-100 rounded-xl">
+                <span className="text-xs sm:text-sm text-gray-600">Welcome back,</span>
+                <span className="text-xs sm:text-sm font-semibold text-gray-800 truncate max-w-[100px] sm:max-w-none">{adminUser.name || 'Admin'}</span>
               </div>
             </div>
           </div>
@@ -139,7 +139,8 @@ function Layout({ children, setIsAuthenticated }) {
         <div className="lg:hidden fixed top-4 left-4 z-40">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition"
+            className="p-2.5 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all active:scale-95"
+            aria-label="Open menu"
           >
             <MenuIcon />
           </button>
@@ -186,7 +187,7 @@ function Layout({ children, setIsAuthenticated }) {
         )}
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-8 lg:p-10 xl:p-12 animate-fade-in">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 xl:p-10 animate-fade-in">
           {children}
         </main>
       </div>

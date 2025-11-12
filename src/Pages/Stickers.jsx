@@ -673,39 +673,39 @@ function Stickers() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-fade-in">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-10 text-white shadow-xl">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold mb-3">Sticker Management</h1>
-            <p className="text-purple-100 text-lg">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 relative z-10">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">Sticker Management</h1>
+            <p className="text-purple-100 text-sm sm:text-base lg:text-lg">
               {searchTerm ? `${filteredStickers.length} of ${stickers.length} stickers` : `Total: ${stickers.length} stickers`}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-purple-600 rounded-lg sm:rounded-xl font-semibold hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base whitespace-nowrap"
             >
-              <AddIcon />
-              Add New Sticker
+              <AddIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              <span>Add New Sticker</span>
             </button>
-            <StickyNote2Icon className="text-7xl opacity-20" />
+            <StickyNote2Icon className="hidden sm:block text-5xl sm:text-6xl lg:text-7xl opacity-20 flex-shrink-0" />
           </div>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100">
         <div className="relative">
-          <SearchIcon className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <SearchIcon className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="Search stickers by name, category, or creator..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-base"
+            className="w-full pl-10 sm:pl-14 pr-4 sm:pr-5 py-3 sm:py-4 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base"
           />
         </div>
       </div>
@@ -796,16 +796,16 @@ function Stickers() {
       )}
 
       {/* Stickers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {filteredStickers.length === 0 ? (
           <div className="col-span-full">
-            <div className="bg-white rounded-xl shadow-lg p-16 border border-gray-100 text-center">
-              <StickyNote2Icon className="text-7xl text-gray-300 mx-auto mb-5" />
-              <p className="text-gray-500 text-xl font-medium mb-3">
+            <div className="bg-white rounded-xl shadow-lg p-8 sm:p-12 lg:p-16 border border-gray-100 text-center">
+              <StickyNote2Icon className="text-5xl sm:text-6xl lg:text-7xl text-gray-300 mx-auto mb-4 sm:mb-5" />
+              <p className="text-gray-500 text-lg sm:text-xl font-medium mb-2 sm:mb-3">
                 {loading ? 'Loading stickers...' : 'No stickers found'}
               </p>
               {searchTerm && (
-                <p className="text-gray-400 text-base">Try adjusting your search terms</p>
+                <p className="text-gray-400 text-sm sm:text-base">Try adjusting your search terms</p>
               )}
             </div>
           </div>
@@ -828,53 +828,53 @@ function Stickers() {
             return (
               <div
                 key={sticker.id}
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift group"
+                className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover-lift group"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={sticker.imageUrl}
                     alt={sticker.name}
-                    className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <span className={`px-3 py-1.5 backdrop-blur-sm text-white text-xs font-semibold rounded-full ${
+                  <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-col gap-1.5 sm:gap-2">
+                    <span className={`px-2 sm:px-3 py-1 sm:py-1.5 backdrop-blur-sm text-white text-xs font-semibold rounded-full ${
                       sticker.creatorType === 'stickkery' 
                         ? 'bg-gradient-to-r from-purple-600 to-indigo-600' 
                         : 'bg-gradient-to-r from-blue-600 to-cyan-600'
                     }`}>
                       {sticker.creatorType === 'stickkery' ? 'Stickkery' : 'User Created'}
                     </span>
-                    <span className="px-3 py-1.5 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
+                    <span className="px-2 sm:px-3 py-1 sm:py-1.5 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
                       {sticker.category || 'Uncategorized'}
                     </span>
                   </div>
-                  <div className="absolute top-4 right-4">
-                    <span className={`px-3 py-1.5 backdrop-blur-sm text-xs font-semibold rounded-full ${statusBadgeClasses}`}>
+                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+                    <span className={`px-2 sm:px-3 py-1 sm:py-1.5 backdrop-blur-sm text-xs font-semibold rounded-full ${statusBadgeClasses}`}>
                       {statusLabel}
                     </span>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 truncate">{sticker.name}</h3>
+                <div className="p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 truncate">{sticker.name}</h3>
                   
                   {/* Creator Information */}
-                  <div className="mb-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                    <div className="flex items-center gap-3">
+                  <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg sm:rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       {sticker.creatorType === 'stickkery' ? (
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                          <BusinessIcon className="text-white text-sm" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                          <BusinessIcon sx={{ fontSize: { xs: 16, sm: 20 } }} className="text-white" />
                         </div>
                       ) : (
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center shadow-md">
-                          <PersonIcon className="text-white text-sm" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                          <PersonIcon sx={{ fontSize: { xs: 16, sm: 20 } }} className="text-white" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                           Created By
                         </p>
-                        <p className="text-sm font-bold text-gray-900 truncate">
+                        <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">
                           {sticker.creatorName || 'Unknown'}
                         </p>
                       </div>
@@ -882,16 +882,16 @@ function Stickers() {
                   </div>
 
                   {/* Price and Actions */}
-                  <div className="flex justify-between items-center mb-5">
-                    <div>
+                  <div className="flex justify-between items-center mb-4 sm:mb-5 gap-3">
+                    <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Price</p>
-                      <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                      <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                         ${sticker.price != null ? sticker.price.toFixed(2) : '0.00'}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Type</p>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                      <span className={`text-xs font-semibold px-2 sm:px-3 py-1 rounded-full ${
                         sticker.stickerType === 'template'
                           ? 'bg-purple-100 text-purple-700'
                           : 'bg-blue-100 text-blue-700'
@@ -922,11 +922,11 @@ function Stickers() {
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
                     <button
                       onClick={() => handleEditSticker(sticker)}
                       disabled={sticker.creatorType !== 'stickkery' || sticker.stickerType !== 'template'}
-                      className={`flex-1 px-4 py-2.5 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 font-medium transition-all duration-200 hover:scale-105 ${
+                      className={`flex-1 min-w-[80px] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 font-medium transition-all duration-200 hover:scale-105 ${
                         sticker.creatorType !== 'stickkery' || sticker.stickerType !== 'template'
                           ? 'opacity-50 cursor-not-allowed'
                           : ''
@@ -942,14 +942,14 @@ function Stickers() {
                         <button
                           onClick={() => handleReviewSticker(sticker, 'APPROVED')}
                           disabled={reviewingStickers.has(sticker.id) || isApproved}
-                          className={`flex-1 px-4 py-2.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 ${
+                          className={`flex-1 min-w-[80px] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-1.5 sm:gap-2 ${
                             reviewingStickers.has(sticker.id) || isApproved ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                         >
                           {reviewingStickers.has(sticker.id) && !isApproved ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
-                              Approving...
+                              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                              <span className="hidden sm:inline">Approving...</span>
                             </>
                           ) : (
                             'Approve'
@@ -958,14 +958,14 @@ function Stickers() {
                         <button
                           onClick={() => handleReviewSticker(sticker, 'REJECTED')}
                           disabled={reviewingStickers.has(sticker.id) || isRejected}
-                          className={`flex-1 px-4 py-2.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 ${
+                          className={`flex-1 min-w-[80px] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-1.5 sm:gap-2 ${
                             reviewingStickers.has(sticker.id) || isRejected ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                         >
                           {reviewingStickers.has(sticker.id) && !isRejected ? (
                             <>
-                              <div className="w-4 h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
-                              Rejecting...
+                              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+                              <span className="hidden sm:inline">Rejecting...</span>
                             </>
                           ) : (
                             'Reject'
@@ -977,20 +977,20 @@ function Stickers() {
                       <button
                         onClick={() => handlePublishSticker(sticker.id, sticker.name)}
                         disabled={publishingStickers.has(sticker.id)}
-                        className={`flex-1 px-4 py-2.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 ${
+                        className={`flex-1 min-w-[80px] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-1.5 sm:gap-2 ${
                           publishingStickers.has(sticker.id) ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                         title="Publish sticker (make visible on main website)"
                       >
                         {publishingStickers.has(sticker.id) ? (
                           <>
-                            <div className="w-4 h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
-                            Publishing...
+                            <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="hidden sm:inline">Publishing...</span>
                           </>
                         ) : (
                           <>
-                            <PublishIcon fontSize="small" />
-                            Publish
+                            <PublishIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
+                            <span>Publish</span>
                           </>
                         )}
                       </button>
@@ -998,20 +998,20 @@ function Stickers() {
                       <button
                         onClick={() => handleUnpublishSticker(sticker.id, sticker.name)}
                         disabled={unpublishingStickers.has(sticker.id)}
-                        className={`flex-1 px-4 py-2.5 text-sm bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 ${
+                        className={`flex-1 min-w-[80px] px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center gap-1.5 sm:gap-2 ${
                           unpublishingStickers.has(sticker.id) ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                         title="Unpublish sticker (hide from main website)"
                       >
                         {unpublishingStickers.has(sticker.id) ? (
                           <>
-                            <div className="w-4 h-4 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
-                            Unpublishing...
+                            <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-orange-700 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="hidden sm:inline">Unpublishing...</span>
                           </>
                         ) : (
                           <>
-                            <UnpublishIcon fontSize="small" />
-                            Unpublish
+                            <UnpublishIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
+                            <span>Unpublish</span>
                           </>
                         )}
                       </button>
@@ -1034,21 +1034,22 @@ function Stickers() {
 
       {/* Add Sticker Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={handleCloseModal}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-              <h2 className="text-3xl font-bold text-gray-900">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4" onClick={handleCloseModal}>
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex items-center justify-between z-10">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                 {isEditMode ? 'Edit Sticker' : 'Add New Sticker'}
               </h2>
               <button
                 onClick={handleCloseModal}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Close modal"
               >
                 <CloseIcon className="text-gray-600" />
               </button>
             </div>
 
-            <form onSubmit={handleAddSticker} className="p-8 space-y-6">
+            <form onSubmit={handleAddSticker} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
               {formError && (
                 <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-5 py-4 rounded-lg animate-slide-in">
                   <div className="flex items-center">
@@ -1068,7 +1069,7 @@ function Stickers() {
               )}
 
               <div>
-                <label htmlFor="name" className="block text-base font-semibold text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                   Sticker Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1078,17 +1079,17 @@ function Stickers() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-base"
+                  className="w-full px-4 sm:px-5 py-2.5 sm:py-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base"
                   placeholder="Enter sticker name"
                 />
               </div>
 
               <div>
-                <label className="block text-base font-semibold text-gray-700 mb-2">
+                <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                   Image <span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-3">
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <input
                       id="imageUrl"
                       name="imageUrl"
@@ -1096,16 +1097,16 @@ function Stickers() {
                       value={formData.imageUrl}
                       onChange={handleInputChange}
                       required={!uploadedImage}
-                      className="flex-1 px-5 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-base"
+                      className="flex-1 px-4 sm:px-5 py-2.5 sm:py-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base"
                       placeholder={uploadedImage ? "Image uploaded - optional URL" : "Enter image URL or upload from device"}
                     />
                     <button
                       type="button"
                       onClick={() => setIsImageEditorOpen(true)}
-                      className="px-6 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl"
+                      className="px-4 sm:px-6 py-2.5 sm:py-3 bg-purple-600 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-purple-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl text-sm sm:text-base whitespace-nowrap"
                     >
-                      <ImageIcon />
-                      Upload Image
+                      <ImageIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
+                      <span>Upload Image</span>
                     </button>
                   </div>
                   <p className="text-sm text-gray-500">
@@ -1154,9 +1155,9 @@ function Stickers() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label htmlFor="category" className="block text-base font-semibold text-gray-700 mb-2">
+                  <label htmlFor="category" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                     Category <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
@@ -1166,7 +1167,7 @@ function Stickers() {
                       value={formData.category}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-5 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-base appearance-none cursor-pointer"
+                      className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base appearance-none cursor-pointer"
                     >
                       <option value="">Select a category</option>
                       {categoriesLoading ? (
@@ -1181,22 +1182,22 @@ function Stickers() {
                         <option value="" disabled>No categories available</option>
                       )}
                     </select>
-                    <ArrowDropDownIcon className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <ArrowDropDownIcon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" sx={{ fontSize: { xs: 20, sm: 24 } }} />
                   </div>
                   {categories.length === 0 && !categoriesLoading && (
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-xs sm:text-sm text-gray-500">
                       Categories will be loaded from the main website
                     </p>
                   )}
                   {formData.category && (
-                    <p className="mt-2 text-sm text-green-600">
+                    <p className="mt-2 text-xs sm:text-sm text-green-600">
                       Selected: <strong>{formData.category}</strong>
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label htmlFor="price" className="block text-base font-semibold text-gray-700 mb-2">
+                  <label htmlFor="price" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
                     Price ($) <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1208,31 +1209,31 @@ function Stickers() {
                     value={formData.price}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-base"
+                    className="w-full px-4 sm:px-5 py-2.5 sm:py-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base"
                     placeholder="0.00"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="flex items-start gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl border border-gray-200">
                 <input
                   id="isPublished"
                   name="isPublished"
                   type="checkbox"
                   checked={formData.isPublished}
                   onChange={handleInputChange}
-                  className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 mt-0.5 flex-shrink-0"
                 />
-                <label htmlFor="isPublished" className="text-base font-semibold text-gray-700 cursor-pointer">
+                <label htmlFor="isPublished" className="text-sm sm:text-base font-semibold text-gray-700 cursor-pointer">
                   Publish immediately (visible on main website)
                 </label>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                  className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 border-2 border-gray-300 text-gray-700 rounded-lg sm:rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200 text-sm sm:text-base"
                   disabled={formLoading}
                 >
                   Cancel
@@ -1240,11 +1241,11 @@ function Stickers() {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base"
                 >
                   {formLoading ? (
                     <span className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       {isEditMode ? 'Updating...' : 'Adding...'}
                     </span>
                   ) : (
