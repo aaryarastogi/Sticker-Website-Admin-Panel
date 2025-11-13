@@ -21,6 +21,7 @@ function Stickers() {
     imageUrl: '',
     category: '',
     price: '',
+    currency: 'USD', // Default currency
     isPublished: true,
   })
   const [formLoading, setFormLoading] = useState(false)
@@ -82,6 +83,10 @@ function Stickers() {
       
       if (response.ok) {
         const data = await response.json()
+        console.log('=== RAW API RESPONSE ===')
+        console.log('First sticker from API:', data[0])
+        console.log('Currency field in first sticker:', data[0]?.currency)
+        
         const normalized = data.map((sticker) => {
           // For template stickers, status can be APPROVED or UNPUBLISHED
           // For user-created stickers, status can be PENDING, APPROVED, or REJECTED
@@ -105,10 +110,18 @@ function Stickers() {
             status: status.toUpperCase(),
             isPublished: normalizedIsPublished,
             adminNote: sticker.adminNote || sticker.admin_note || '',
+            // Ensure currency is preserved
+            currency: sticker.currency || (sticker.stickerType === 'template' ? 'USD' : null)
           }
         })
         console.log('=== FETCHED STICKERS ===')
         console.log('Total stickers:', normalized.length)
+        // Debug: Log currency for each sticker
+        normalized.forEach((sticker, index) => {
+          if (sticker.stickerType === 'user_created') {
+            console.log(`Sticker ${index + 1}: ${sticker.name} - Price: ${sticker.price}, Currency: ${sticker.currency || 'NOT SET'}`)
+          }
+        })
         setStickers(normalized)
       } else {
         console.error('Failed to fetch stickers:', response.status, response.statusText)
@@ -155,6 +168,7 @@ function Stickers() {
         imageUrl: finalImageUrl,
         category: categoryValue,
         price: parseFloat(formData.price) || 0,
+        currency: formData.currency || 'USD', // Include currency
         templateId: null, // Admin-created stickers don't need a template
         isPublished: formData.isPublished, // Not used by backend but kept for consistency
       }
@@ -216,6 +230,7 @@ function Stickers() {
           imageUrl: '',
           category: '',
           price: '',
+          currency: 'USD',
           isPublished: true,
         })
         setUploadedImage(null)
@@ -349,6 +364,7 @@ function Stickers() {
       imageUrl: '',
       category: '',
       price: '',
+      currency: 'USD',
       isPublished: true,
     })
     setFormError('')
@@ -371,6 +387,7 @@ function Stickers() {
       imageUrl: sticker.imageUrl || '',
       category: sticker.category || '',
       price: sticker.price ? sticker.price.toString() : '0',
+      currency: sticker.currency || 'USD',
       isPublished: true,
     })
     setUploadedImage(null)
@@ -886,7 +903,37 @@ function Stickers() {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Price</p>
                       <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                        ${sticker.price != null ? sticker.price.toFixed(2) : '0.00'}
+                        {(() => {
+                          // Get currency from sticker, with fallback logic
+                          let currencyCode = sticker.currency
+                          
+                          // If currency is not set, try to infer from price pattern or default
+                          if (!currencyCode || currencyCode === 'NOT SET' || currencyCode.trim() === '') {
+                            // For template stickers, always USD
+                            if (sticker.stickerType === 'template') {
+                              currencyCode = 'USD'
+                            } else {
+                              // For user-created stickers without currency, check price pattern
+                              // If price is a round number like 62.25, 41.5, etc., it's likely INR
+                              // But we can't be 100% sure, so default to USD for safety
+                              // In production, you should update the database to set currency
+                              currencyCode = 'USD' // Default fallback
+                            }
+                          }
+                          
+                          const currencySymbols = {
+                            'INR': '₹',
+                            'USD': '$',
+                            'GBP': '£',
+                            'EUR': '€',
+                            'CAD': 'C$',
+                            'AED': 'د.إ',
+                            'RUB': '₽',
+                            'AUD': 'A$'
+                          }
+                          const symbol = currencySymbols[currencyCode.toUpperCase()] || currencyCode
+                          return `${symbol}${sticker.price != null ? parseFloat(sticker.price).toFixed(2) : '0.00'}`
+                        })()}
                       </span>
                     </div>
                     <div className="text-right flex-shrink-0">
@@ -1155,50 +1202,50 @@ function Stickers() {
                 </div>
               </div>
 
+              <div>
+                <label htmlFor="category" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base appearance-none cursor-pointer"
+                  >
+                    <option value="">Select a category</option>
+                    {categoriesLoading ? (
+                      <option value="" disabled>Loading categories...</option>
+                    ) : categories.length > 0 ? (
+                      categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>No categories available</option>
+                    )}
+                  </select>
+                  <ArrowDropDownIcon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" sx={{ fontSize: { xs: 20, sm: 24 } }} />
+                </div>
+                {categories.length === 0 && !categoriesLoading && (
+                  <p className="mt-2 text-xs sm:text-sm text-gray-500">
+                    Categories will be loaded from the main website
+                  </p>
+                )}
+                {formData.category && (
+                  <p className="mt-2 text-xs sm:text-sm text-green-600">
+                    Selected: <strong>{formData.category}</strong>
+                  </p>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <label htmlFor="category" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                    Category <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base appearance-none cursor-pointer"
-                    >
-                      <option value="">Select a category</option>
-                      {categoriesLoading ? (
-                        <option value="" disabled>Loading categories...</option>
-                      ) : categories.length > 0 ? (
-                        categories.map((category) => (
-                          <option key={category} value={category}>
-                            {category}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="" disabled>No categories available</option>
-                      )}
-                    </select>
-                    <ArrowDropDownIcon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" sx={{ fontSize: { xs: 20, sm: 24 } }} />
-                  </div>
-                  {categories.length === 0 && !categoriesLoading && (
-                    <p className="mt-2 text-xs sm:text-sm text-gray-500">
-                      Categories will be loaded from the main website
-                    </p>
-                  )}
-                  {formData.category && (
-                    <p className="mt-2 text-xs sm:text-sm text-green-600">
-                      Selected: <strong>{formData.category}</strong>
-                    </p>
-                  )}
-                </div>
-
-                <div>
                   <label htmlFor="price" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
-                    Price ($) <span className="text-red-500">*</span>
+                    Price <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="price"
@@ -1212,6 +1259,31 @@ function Stickers() {
                     className="w-full px-4 sm:px-5 py-2.5 sm:py-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base"
                     placeholder="0.00"
                   />
+                </div>
+                <div>
+                  <label htmlFor="currency" className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+                    Currency <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="currency"
+                      name="currency"
+                      value={formData.currency}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all bg-gray-50 focus:bg-white text-sm sm:text-base appearance-none cursor-pointer"
+                    >
+                      <option value="USD">USD ($)</option>
+                      <option value="INR">INR (₹)</option>
+                      <option value="GBP">GBP (£)</option>
+                      <option value="EUR">EUR (€)</option>
+                      <option value="CAD">CAD (C$)</option>
+                      <option value="AED">AED (د.إ)</option>
+                      <option value="RUB">RUB (₽)</option>
+                      <option value="AUD">AUD (A$)</option>
+                    </select>
+                    <ArrowDropDownIcon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" sx={{ fontSize: { xs: 20, sm: 24 } }} />
+                  </div>
                 </div>
               </div>
 
